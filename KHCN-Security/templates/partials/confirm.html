@@ -1,0 +1,8 @@
+<dialog class="confirm-dialog" data-confirm-dialog aria-labelledby="confirm-title" aria-describedby="confirm-description">
+  <form method="dialog">
+    <span class="dialog-symbol" aria-hidden="true">{% include 'partials/icon.html' with icon='alert' %}</span>
+    <h2 id="confirm-title" data-confirm-title>Xác nhận thao tác</h2>
+    <p id="confirm-description" data-confirm-description></p>
+    <div class="dialog-footer"><button class="btn btn-outline-secondary" value="cancel" autofocus>Quay lại</button><button class="btn btn-primary" value="confirm" data-confirm-submit>Xác nhận</button></div>
+  </form>
+</dialog>

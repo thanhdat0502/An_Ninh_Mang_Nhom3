@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Đăng nhập | KHCN sinh viên{% endblock %}
+{% block body_class %}login-body{% endblock %}
+{% block extra_head %}<script src="{% static 'js/login.js' %}" defer></script>{% endblock %}
+{% block shell %}
+<main id="main-content" class="login-layout" tabindex="-1">
+  <section class="login-overview" aria-labelledby="login-title">
+    <a class="brand" href="{% url 'core:home' %}"><span class="brand-mark" aria-hidden="true">{% include 'partials/icon.html' with icon='book' %}</span><span>KHCN<span class="brand-subtitle">Sinh viên nghiên cứu</span></span></a>
+    <div class="login-story">
+      <p class="eyebrow">Không gian nghiên cứu sinh viên</p>
+      <h1 id="login-title">Quản lý đề tài.<br>Theo dõi nghiên cứu.</h1>
+      <p>Tra cứu đề tài, gửi đăng ký và theo dõi kết quả xét duyệt trong cùng một không gian làm việc.</p>
+      <div class="login-steps"><span>{% include 'partials/icon.html' with icon='folder' %} Tra cứu đề tài</span><span>{% include 'partials/icon.html' with icon='clipboard' %} Đăng ký tham gia</span><span>{% include 'partials/icon.html' with icon='check' %} Theo dõi xét duyệt</span></div>
+    </div>
+    <div class="login-aside-foot">{% include 'partials/icon.html' with icon='book' %} Hệ thống quản lý khoa học và công nghệ sinh viên</div>
+  </section>
+  <section class="login-main" aria-labelledby="login-form-title">
+    <div class="login-panel">
+      <p class="eyebrow">Chào mừng trở lại</p>
+      <h2 id="login-form-title">Đăng nhập tài khoản</h2>
+      <p class="login-hint">Sử dụng email và mật khẩu đã được cấp.</p>
+      <form id="login-form" method="post" action="{% url 'auth_api:login' %}">
+        {% csrf_token %}
+        <div class="login-field"><label class="form-label" for="login-email">Email</label><input class="form-control" id="login-email" name="email" type="email" autocomplete="username" maxlength="254" placeholder="Nhập địa chỉ email" required aria-describedby="email-error"><p class="field-error" id="email-error" hidden></p></div>
+        <div class="login-field"><label class="form-label" for="login-password">Mật khẩu</label><div class="password-control"><input class="form-control" id="login-password" name="password" type="password" autocomplete="current-password" maxlength="1024" placeholder="Nhập mật khẩu" required aria-describedby="password-error"><button type="button" class="password-toggle" data-password-toggle aria-controls="login-password" aria-pressed="false" aria-label="Hiện mật khẩu">Hiện</button></div><p class="field-error" id="password-error" hidden></p></div>
+        <button class="btn btn-primary w-100" type="submit">Đăng nhập {% include 'partials/icon.html' with icon='arrow' %}</button>
+        <p class="login-status" role="status" aria-live="polite" data-login-status></p>
+      </form>
+      <p class="login-help">Chưa có tài khoản hoặc quên mật khẩu? Liên hệ quản trị viên phụ trách để được hỗ trợ.</p>
+      <div class="login-return"><a href="{% url 'core:home' %}">Xem danh mục đề tài {% include 'partials/icon.html' with icon='arrow' %}</a></div>
+    </div>
+  </section>
+</main>
+{% endblock %}

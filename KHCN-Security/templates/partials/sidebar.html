@@ -1,0 +1,14 @@
+<aside class="sidebar" id="app-sidebar" aria-label="Điều hướng hệ thống">
+  <a class="brand" href="{% url 'core:home' %}"><span class="brand-mark" aria-hidden="true">{% include 'partials/icon.html' with icon='book' %}</span><span>KHCN<span class="brand-subtitle">Sinh viên nghiên cứu</span></span></a>
+  <button class="icon-button sidebar-close" type="button" data-menu-close aria-label="Đóng điều hướng">{% include 'partials/icon.html' with icon='close' %}</button>
+  <div class="sidebar-label">Không gian làm việc</div>
+  <nav class="sidebar-nav" aria-label="Điều hướng chính">
+    <a href="{% url 'core:dashboard' %}" data-nav="dashboard">{% include 'partials/icon.html' with icon='grid' %}<span>Tổng quan</span></a>
+    <a href="{% url 'topics:list' %}" data-nav="topics">{% include 'partials/icon.html' with icon='folder' %}<span>Đề tài nghiên cứu</span></a>
+    <a href="{% url 'registrations:list' %}" data-nav="registrations">{% include 'partials/icon.html' with icon='clipboard' %}<span data-registration-nav>Đăng ký & xét duyệt</span></a>
+    <a href="{% url 'accounts:workspace' %}" data-nav="accounts" data-admin-nav hidden>{% include 'partials/icon.html' with icon='users' %}<span>Quản lý tài khoản</span></a>
+  </nav>
+  <div class="sidebar-label sidebar-label-secondary">Tra cứu</div>
+  <nav class="sidebar-nav" aria-label="Danh mục công khai"><a href="{% url 'core:home' %}" data-nav="catalog">{% include 'partials/icon.html' with icon='compass' %}<span>Danh mục công khai</span></a></nav>
+  <div class="sidebar-foot"><span class="sidebar-foot-mark">{% include 'partials/icon.html' with icon='book' %}</span><p>Nghiên cứu từ ý tưởng<span>Đề tài · Đăng ký · Xét duyệt</span></p></div>
+</aside>

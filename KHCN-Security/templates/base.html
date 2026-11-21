@@ -1,0 +1,47 @@
+{% load static %}
+<!doctype html>
+<html lang="vi" data-type="software" data-radius="soft">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="page-type" content="software">
+  <meta name="site-kind" content="software">
+  <meta name="description" content="Quản lý đề tài khoa học và công nghệ sinh viên: tra cứu, đăng ký và xét duyệt nghiên cứu.">
+  <meta name="theme-color" content="#12243b">
+  <title>{% block title %}KHCN sinh viên | Quản lý nghiên cứu{% endblock %}</title>
+  <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/site.css' %}">
+  <script src="{% static 'js/site.js' %}" defer></script>
+  <script src="{% static 'js/auth.js' %}" defer></script>
+  <script src="{% static 'js/ui.js' %}" defer></script>
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}app-body{% endblock %}">
+  <a class="skip-link" href="#main-content">Đến nội dung chính</a>
+  {% block shell %}
+  {% include 'partials/sidebar.html' %}
+  <div class="app-main">
+    <header class="topbar">
+      <div class="topbar-context">
+        <button class="icon-button menu-toggle" type="button" data-menu-toggle aria-controls="app-sidebar" aria-expanded="false" aria-label="Mở điều hướng">{% include 'partials/icon.html' with icon='menu' %}</button>
+        <div><span class="topbar-system">Không gian nghiên cứu</span><span class="topbar-title">{% block page_name %}Danh mục đề tài{% endblock %}</span></div>
+      </div>
+      <div class="topbar-account">
+        <span class="account-avatar" data-user-initial aria-hidden="true">K</span>
+        <div class="account-info"><span data-current-user hidden></span><span class="account-role" data-current-role>Khách truy cập</span></div>
+        <a class="btn btn-primary" data-login-link href="{% url 'accounts:login' %}">Đăng nhập</a>
+        <button class="icon-button" type="button" data-logout hidden aria-label="Đăng xuất" title="Đăng xuất">{% include 'partials/icon.html' with icon='logout' %}</button>
+      </div>
+    </header>
+    <div class="page-content">
+      <p class="alert alert-danger" data-auth-notice role="status" hidden></p>
+      <main id="main-content" tabindex="-1">{% block content %}{% endblock %}</main>
+      <footer class="site-footer"><span>KHCN sinh viên · Quản lý nghiên cứu</span><a href="{% url 'core:health' %}">Trạng thái hệ thống {% include 'partials/icon.html' with icon='arrow' %}</a></footer>
+    </div>
+  </div>
+  {% endblock %}
+  {% include 'partials/confirm.html' %}
+  <noscript><p class="noscript-message">Bật JavaScript để sử dụng các thao tác quản lý, đăng nhập và đăng ký đề tài. Danh mục công khai vẫn có thể tra cứu.</p></noscript>
+</body>
+</html>

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Quản lý tài khoản | KHCN sinh viên{% endblock %}
+{% block page_name %}Quản lý tài khoản{% endblock %}
+{% block extra_head %}<script src="{% static 'js/accounts.js' %}" defer></script>{% endblock %}
+{% block content %}
+<section data-account-workspace>
+  <div class="page-heading"><div><p class="eyebrow">Quản trị hệ thống</p><h1>Quản lý tài khoản</h1><p>Tra cứu thông tin, vai trò và trạng thái hoạt động của tài khoản.</p></div><a class="btn btn-outline-secondary" data-account-permissions hidden title="Mở công cụ phân quyền; cần đăng nhập quản trị riêng">{% include 'partials/icon.html' with icon='users' %} Phân quyền người dùng</a></div>
+  <p class="alert alert-info" data-account-message role="status" hidden></p>
+  <a class="btn btn-primary mb-4" href="{% url 'accounts:login' %}" data-account-login hidden>Đăng nhập để tiếp tục</a>
+  <div class="surface" data-account-content hidden>
+    <form class="filter-panel row g-3 align-items-end" data-account-filter role="search">
+      <div class="col-12 col-lg-5"><label class="form-label" for="account-query">Tìm kiếm tài khoản</label><div class="input-search">{% include 'partials/icon.html' with icon='search' %}<input class="form-control" id="account-query" name="search" type="search" maxlength="150" placeholder="Nhập họ tên hoặc email…"></div></div>
+      <div class="col-12 col-sm-6 col-lg-3"><label class="form-label" for="account-role">Vai trò</label><select class="form-select" id="account-role" name="role"><option value="">Tất cả vai trò</option><option value="ADMIN">Quản trị viên</option><option value="LECTURER">Giảng viên</option><option value="STUDENT">Sinh viên</option></select></div>
+      <div class="col-12 col-sm-6 col-lg-2"><label class="form-label" for="account-active">Hoạt động</label><select class="form-select" id="account-active" name="active"><option value="">Tất cả</option><option value="true">Đang hoạt động</option><option value="false">Đã khóa</option></select></div>
+      <div class="col-12 col-lg-2"><button class="btn btn-primary w-100" type="submit">Tìm tài khoản</button></div>
+    </form>
+    <div class="result-line"><p role="status" data-account-count>Đang tải tài khoản…</p><span>Chỉ quản trị viên được truy cập</span></div>
+    <div class="table-responsive" tabindex="0" role="region" aria-label="Bảng tài khoản"><table class="table"><caption>Danh sách tài khoản hệ thống</caption><thead><tr><th scope="col">ID</th><th scope="col">Tài khoản</th><th scope="col">Vai trò</th><th scope="col">Trạng thái</th><th scope="col">Thao tác</th></tr></thead><tbody data-account-rows></tbody></table></div>
+    <nav class="pagination-nav" aria-label="Phân trang tài khoản"><button class="btn btn-outline-secondary" type="button" data-account-prev disabled>Trang trước</button><span data-account-page>Trang 1</span><button class="btn btn-outline-secondary" type="button" data-account-next disabled>Trang sau</button></nav>
+  </div>
+</section>
+<dialog class="account-dialog" data-account-dialog aria-labelledby="account-editor-title">
+  <form data-account-editor>
+    <div class="dialog-heading"><div><h2 id="account-editor-title">Chỉnh sửa tài khoản</h2><p>Cập nhật thông tin và trạng thái sử dụng.</p></div><button type="button" class="icon-button" data-account-close aria-label="Đóng biểu mẫu">{% include 'partials/icon.html' with icon='close' %}</button></div>
+    <p class="alert alert-danger" data-account-editor-message role="alert" hidden></p>
+    <div class="row g-3">
+      <div class="col-12"><label class="form-label" for="account-name">Họ và tên</label><input class="form-control" id="account-name" name="full_name" maxlength="150" autocomplete="off" required aria-describedby="account-error-full_name"><p class="field-error" id="account-error-full_name" hidden></p></div>
+      <div class="col-12"><label class="form-label" for="account-email">Email</label><input class="form-control" id="account-email" name="email" type="email" maxlength="254" autocomplete="off" required aria-describedby="account-error-email"><p class="field-error" id="account-error-email" hidden></p></div>
+      <div class="col-12 col-sm-6"><label class="form-label" for="account-state">Trạng thái tài khoản</label><select class="form-select" id="account-state" name="is_active" aria-describedby="account-error-is_active"><option value="true">Đang hoạt động</option><option value="false">Đã khóa</option></select><p class="field-error" id="account-error-is_active" hidden></p></div>
+      <div class="col-12 col-sm-6"><span class="form-label d-block" id="account-editor-role-label">Vai trò hiện tại</span><p class="readonly-field mb-0" data-account-editor-role aria-labelledby="account-editor-role-label"></p></div>
+    </div>
+    <p class="form-hint mt-3">Biểu mẫu này cập nhật thông tin và trạng thái. Dùng công cụ phân quyền riêng để quản lý nhóm vai trò.</p>
+    <div class="dialog-footer"><button class="btn btn-outline-secondary" type="button" data-account-cancel>Hủy thay đổi</button><button class="btn btn-primary" type="submit">Lưu tài khoản</button></div>
+  </form>
+</dialog>
+{% endblock %}

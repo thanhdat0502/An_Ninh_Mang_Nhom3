@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Đề tài nghiên cứu | KHCN sinh viên{% endblock %}
+{% block page_name %}Đề tài nghiên cứu{% endblock %}
+{% block extra_head %}<script src="{% static 'js/topics.js' %}" defer></script>{% endblock %}
+{% block content %}
+<section class="workspace" data-topic-workspace>
+  <div class="workspace-heading"><div><p class="eyebrow">Đề tài nghiên cứu</p><h1>Danh sách đề tài</h1><p data-scope>Đang tải không gian đề tài của bạn…</p></div><div class="workspace-actions"><button class="btn btn-primary" type="button" data-create-topic hidden>{% include 'partials/icon.html' with icon='plus' %} Thêm đề tài</button></div></div>
+  <p class="alert alert-info" role="status" data-topic-message hidden></p>
+  <a class="btn btn-primary mb-4" href="{% url 'accounts:login' %}" data-topic-login hidden>Đăng nhập để xem đề tài</a>
+  <div class="surface">
+    <form class="filter-panel row g-3 align-items-end" data-topic-filter role="search">
+      <div class="col-12 col-md-6"><label class="form-label" for="workspace-search">Tìm kiếm đề tài</label><div class="input-search">{% include 'partials/icon.html' with icon='search' %}<input class="form-control" id="workspace-search" name="search" type="search" maxlength="150" placeholder="Nhập mã hoặc tên đề tài…"></div></div>
+      <div class="col-12 col-md-4"><label class="form-label" for="workspace-status">Trạng thái</label><select class="form-select" id="workspace-status" name="status"><option value="">Tất cả trạng thái</option></select></div>
+      <div class="col-12 col-md-2"><button class="btn btn-primary w-100" type="submit">Tìm đề tài</button></div>
+    </form>
+    <div class="result-line"><p data-result-count role="status">Đang tải danh sách…</p><span>Danh sách theo quyền truy cập</span></div>
+    <div class="table-responsive" tabindex="0" role="region" aria-label="Bảng đề tài, cuộn ngang để xem thêm"><table class="table align-middle"><caption>Đề tài trong phạm vi được cấp quyền</caption><thead><tr><th scope="col">Mã đề tài</th><th scope="col">Tên đề tài</th><th scope="col">Giảng viên phụ trách</th><th scope="col">Trạng thái</th><th scope="col">Thao tác</th></tr></thead><tbody data-topic-rows></tbody></table></div>
+    {% include 'partials/topic_pagination.html' %}
+  </div>
+</section>
+<dialog class="topic-dialog" data-topic-dialog aria-labelledby="topic-editor-title">
+  <form data-topic-editor>
+    <div class="dialog-heading"><div><h2 id="topic-editor-title">Thông tin đề tài</h2><p>Các trường bên dưới đều bắt buộc.</p></div><button class="icon-button" type="button" data-close-editor aria-label="Đóng biểu mẫu">{% include 'partials/icon.html' with icon='close' %}</button></div>
+    <p class="alert alert-danger" role="alert" data-editor-message hidden></p>
+    <div class="row g-3">
+      <div class="col-12 col-sm-5"><label class="form-label" for="edit-code">Mã đề tài</label><input class="form-control" id="edit-code" name="code" maxlength="30" pattern="[A-Z0-9]+(-[A-Z0-9]+)*" required aria-describedby="error-code code-hint"><p class="form-hint" id="code-hint">Chữ in hoa, số và dấu gạch nối.</p><p class="field-error" id="error-code" hidden></p></div>
+      <div class="col-12 col-sm-7"><label class="form-label" for="edit-status">Trạng thái</label><select class="form-select" id="edit-status" name="status" required aria-describedby="error-status"></select><p class="field-error" id="error-status" hidden></p></div>
+      <div class="col-12"><label class="form-label" for="edit-title">Tên đề tài</label><input class="form-control" id="edit-title" name="title" maxlength="255" required aria-describedby="error-title"><p class="field-error" id="error-title" hidden></p></div>
+      <div class="col-12"><label class="form-label" for="edit-lecturer">Giảng viên phụ trách</label><select class="form-select" id="edit-lecturer" name="lecturer" required aria-describedby="error-lecturer"></select><p class="field-error" id="error-lecturer" hidden></p></div>
+      <div class="col-12"><label class="form-label" for="edit-description">Nội dung nghiên cứu</label><textarea class="form-control" id="edit-description" name="description" maxlength="10000" rows="5" required aria-describedby="error-description"></textarea><p class="field-error" id="error-description" hidden></p></div>
+    </div>
+    <div class="dialog-footer"><button class="btn btn-outline-secondary" type="button" data-cancel-topic>Hủy thay đổi</button><button class="btn btn-primary" type="submit">Lưu đề tài</button></div>
+  </form>
+</dialog>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Đăng ký và xét duyệt | KHCN sinh viên{% endblock %}
+{% block page_name %}Đăng ký & xét duyệt{% endblock %}
+{% block extra_head %}<script src="{% static 'js/registrations.js' %}" defer></script>{% endblock %}
+{% block content %}
+<section class="workspace" data-registration-workspace>
+  <div class="workspace-heading"><div><p class="eyebrow">Tham gia nghiên cứu</p><h1 data-registration-title>Đăng ký và xét duyệt đề tài</h1><p data-registration-scope>Đang tải không gian đăng ký của bạn…</p></div><a class="btn btn-outline-secondary" href="{% url 'topics:list' %}">{% include 'partials/icon.html' with icon='folder' %} Xem đề tài</a></div>
+  <p class="alert alert-info" data-registration-message role="status" hidden></p>
+  <a class="btn btn-primary mb-4" href="{% url 'accounts:login' %}" data-registration-login hidden>Đăng nhập để tiếp tục</a>
+  <div data-registration-content hidden>
+    <div class="surface">
+      <form class="filter-panel row g-3 align-items-end" data-registration-filter>
+        <div class="col-12 col-md-4"><label class="form-label" for="registration-status">Trạng thái đăng ký</label><select class="form-select" id="registration-status" name="status"><option value="">Tất cả trạng thái</option></select></div>
+        <div class="col-12 col-md-3"><label class="form-label" for="registration-topic">ID đề tài</label><input class="form-control" id="registration-topic" name="topic" type="number" min="1" step="1" placeholder="Tất cả đề tài"></div>
+        <div class="col-12 col-md-3" data-student-filter hidden><label class="form-label" for="registration-student">ID sinh viên</label><input class="form-control" id="registration-student" name="student" type="number" min="1" step="1" placeholder="Tất cả sinh viên"></div>
+        <div class="col-12 col-md-2"><button class="btn btn-primary w-100" type="submit">Lọc đăng ký</button></div>
+      </form>
+      <div class="result-line"><p role="status" data-registration-count>Đang tải đăng ký…</p><span>Thông tin xét duyệt được lưu lại</span></div>
+      <div class="table-responsive" tabindex="0" role="region" aria-label="Bảng đăng ký, cuộn ngang để xem thêm"><table class="table align-middle"><caption>Đăng ký trong phạm vi được cấp quyền</caption><thead><tr><th scope="col">Đăng ký</th><th scope="col">Đề tài nghiên cứu</th><th scope="col">Sinh viên</th><th scope="col">Trạng thái</th><th scope="col">Thông tin xét duyệt</th><th scope="col">Thao tác</th></tr></thead><tbody data-registration-rows></tbody></table></div>
+      <nav class="pagination-nav" aria-label="Phân trang đăng ký"><button class="btn btn-outline-secondary" type="button" data-registration-prev disabled>Trang trước</button><span data-registration-page>Trang 1</span><button class="btn btn-outline-secondary" type="button" data-registration-next disabled>Trang sau</button></nav>
+    </div>
+    <section class="surface section-gap" aria-labelledby="open-topic-title" data-registration-candidates hidden>
+      <div class="candidate-intro"><h2 id="open-topic-title">Tìm đề tài để đăng ký</h2><p>Chọn hướng nghiên cứu bạn quan tâm. Mỗi đề tài chỉ gửi một yêu cầu đăng ký.</p></div>
+      <form class="filter-panel row g-3 align-items-end" data-candidate-search role="search"><div class="col-12 col-md-9"><label class="form-label" for="candidate-query">Tìm theo mã hoặc tên đề tài</label><div class="input-search">{% include 'partials/icon.html' with icon='search' %}<input class="form-control" id="candidate-query" name="search" type="search" maxlength="150" placeholder="Nhập lĩnh vực hoặc đề tài bạn quan tâm…"></div></div><div class="col-12 col-md-3"><button class="btn btn-primary w-100" type="submit">Tìm đề tài mở</button></div></form>
+      <div class="result-line"><p data-candidate-count role="status">Đang tải đề tài…</p><span>Chỉ hiển thị đề tài đang mở</span></div>
+      <div class="table-responsive" tabindex="0" role="region" aria-label="Bảng đề tài đang mở"><table class="table align-middle"><caption>Chọn đề tài để gửi đăng ký</caption><thead><tr><th scope="col">Mã đề tài</th><th scope="col">Tên đề tài</th><th scope="col">Giảng viên phụ trách</th><th scope="col">Tham gia nghiên cứu</th></tr></thead><tbody data-candidate-rows></tbody></table></div>
+      <nav class="pagination-nav" aria-label="Phân trang đề tài mở"><button class="btn btn-outline-secondary" type="button" data-candidate-prev disabled>Trang trước</button><span data-candidate-page>Trang 1</span><button class="btn btn-outline-secondary" type="button" data-candidate-next disabled>Trang sau</button></nav>
+    </section>
+  </div>
+</section>
+{% endblock %}

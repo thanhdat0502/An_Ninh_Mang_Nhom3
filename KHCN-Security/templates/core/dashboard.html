@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Tổng quan | KHCN sinh viên{% endblock %}
+{% block page_name %}Tổng quan{% endblock %}
+{% block extra_head %}<script src="{% static 'js/dashboard.js' %}" defer></script>{% endblock %}
+{% block content %}
+<section data-dashboard>
+  <div class="page-heading"><div><p class="eyebrow">Không gian làm việc</p><h1>Tổng quan nghiên cứu</h1><p data-dashboard-scope>Đang tải dữ liệu trong phạm vi của bạn…</p></div><a class="btn btn-outline-secondary" href="{% url 'topics:list' %}">{% include 'partials/icon.html' with icon='folder' %} Xem đề tài</a></div>
+  <p class="alert alert-info" role="status" data-dashboard-message hidden></p>
+  <div class="surface dashboard-login" data-dashboard-login hidden><h2>Đăng nhập để xem tổng quan</h2><p>Theo dõi đề tài và kết quả đăng ký trong không gian dành riêng cho tài khoản của bạn.</p><a class="btn btn-primary" href="{% url 'accounts:login' %}">Đăng nhập tài khoản</a></div>
+  <div data-dashboard-content hidden>
+    <div class="dashboard-welcome"><div><span class="welcome-kicker" data-dashboard-role></span><h2 data-dashboard-welcome>Không gian nghiên cứu của bạn</h2><p data-dashboard-description>Theo dõi đề tài và các yêu cầu đăng ký.</p></div><a class="btn" href="{% url 'registrations:list' %}" data-dashboard-action>Xem đăng ký {% include 'partials/icon.html' with icon='arrow' %}</a></div>
+    <div class="stat-grid" aria-label="Thống kê theo phạm vi truy cập">
+      <article class="stat-card"><div class="stat-top"><span>Đề tài nghiên cứu</span><span class="stat-icon blue">{% include 'partials/icon.html' with icon='folder' %}</span></div><p class="stat-value" data-stat="topics" aria-live="polite">—</p><span class="stat-caption" data-topic-stat-caption>Trong phạm vi của bạn</span></article>
+      <article class="stat-card"><div class="stat-top"><span>Đang mở đăng ký</span><span class="stat-icon">{% include 'partials/icon.html' with icon='book' %}</span></div><p class="stat-value" data-stat="open" aria-live="polite">—</p><span class="stat-caption">Đề tài có thể đăng ký</span></article>
+      <article class="stat-card"><div class="stat-top"><span>Đăng ký chờ duyệt</span><span class="stat-icon amber">{% include 'partials/icon.html' with icon='clock' %}</span></div><p class="stat-value" data-stat="pending" aria-live="polite">—</p><span class="stat-caption" data-registration-stat-caption>Trong phạm vi của bạn</span></article>
+      <article class="stat-card"><div class="stat-top"><span>Đăng ký được duyệt</span><span class="stat-icon">{% include 'partials/icon.html' with icon='check' %}</span></div><p class="stat-value" data-stat="approved" aria-live="polite">—</p><span class="stat-caption">Đã được chấp nhận</span></article>
+    </div>
+    <div class="dashboard-columns">
+      <section class="surface" aria-labelledby="dashboard-topics-title"><div class="surface-heading"><div><h2 id="dashboard-topics-title">Đề tài nghiên cứu</h2><p>Một số đề tài trong danh mục của bạn</p></div><a href="{% url 'topics:list' %}">Xem tất cả {% include 'partials/icon.html' with icon='arrow' %}</a></div><div class="table-responsive mt-3" tabindex="0" role="region" aria-label="Đề tài tổng quan"><table class="table"><caption>Đề tài trong phạm vi truy cập</caption><thead><tr><th scope="col">Mã đề tài</th><th scope="col">Tên đề tài</th><th scope="col">Trạng thái</th></tr></thead><tbody data-dashboard-topics></tbody></table></div></section>
+      <section class="surface" aria-labelledby="dashboard-registrations-title"><div class="surface-heading"><div><h2 id="dashboard-registrations-title">Đăng ký gần đây</h2><p>Cập nhật trạng thái tham gia nghiên cứu</p></div></div><div class="activity-list" data-dashboard-registrations></div></section>
+    </div>
+  </div>
+</section>
+{% endblock %}

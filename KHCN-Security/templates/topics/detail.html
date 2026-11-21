@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Chi tiết đề tài | KHCN sinh viên{% endblock %}
+{% block page_name %}Chi tiết đề tài{% endblock %}
+{% block extra_head %}<script src="{% static 'js/topics.js' %}" defer></script><script src="{% static 'js/registrations.js' %}" defer></script>{% endblock %}
+{% block content %}
+<section class="workspace" data-topic-detail="{{ topic_id }}">
+  <a class="login-back" href="{% url 'topics:list' %}">← Về danh sách đề tài</a>
+  <p class="alert alert-info" role="status" data-topic-message>Đang tải thông tin đề tài…</p>
+  <a class="btn btn-primary mb-3" href="{% url 'accounts:login' %}" data-topic-login hidden>Đăng nhập để xem đề tài</a>
+  <article class="surface" data-topic-content hidden>
+    <header class="detail-heading"><span class="topic-code" data-detail-code></span><h1 data-detail-title></h1><p class="text-secondary mb-0">Thông tin đề tài khoa học và công nghệ sinh viên</p></header>
+    <div class="detail-grid"><div><h2>Nội dung nghiên cứu</h2><p class="topic-full-description" data-detail-description></p></div><dl class="detail-metadata"><dt>Giảng viên phụ trách</dt><dd data-detail-lecturer></dd><dt>Trạng thái đề tài</dt><dd data-detail-status></dd></dl></div>
+    <div class="detail-actionbar"><button class="btn btn-primary" type="button" data-register-topic="{{ topic_id }}" hidden>Đăng ký tham gia đề tài</button><a class="btn btn-primary" href="{% url 'topics:list' %}" data-detail-manage hidden>Về danh sách để chỉnh sửa</a><a class="btn btn-outline-secondary" href="{% url 'registrations:list' %}">Xem đăng ký và xét duyệt</a></div>
+  </article>
+  <p class="alert alert-info mt-3" data-registration-message role="status" hidden></p>
+  <a href="{% url 'accounts:login' %}" data-registration-login hidden>Đăng nhập để đăng ký</a>
+</section>
+{% endblock %}

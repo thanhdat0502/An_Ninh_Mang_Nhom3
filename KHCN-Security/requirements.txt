@@ -1,0 +1,6 @@
+# Verified against the prepared virtual environment.
+Django==5.2.19
+djangorestframework==3.18.3
+djangorestframework-simplejwt==5.5.1
+psycopg[binary]==3.3.9
+python-dotenv==1.2.4

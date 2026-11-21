@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="intro" aria-labelledby="page-title">
+  <div class="intro-copy">
+    <p class="eyebrow">Danh mục nghiên cứu sinh viên</p>
+    <h1 id="page-title">Đề tài khoa học & công nghệ</h1>
+    <p class="intro-lead">Tra cứu hướng nghiên cứu, nội dung đề tài và giảng viên phụ trách để lựa chọn lĩnh vực bạn quan tâm.</p>
+    <a class="btn btn-primary" href="{% url 'topics:list' %}">Vào không gian đề tài {% include 'partials/icon.html' with icon='arrow' %}</a>
+  </div>
+  <aside class="catalog-summary" aria-label="Tổng quan danh mục">
+    <p class="summary-label">Danh mục nghiên cứu</p>
+    <p class="summary-total">{{ summary.total }} <span>đề tài</span></p>
+    <div class="summary-bottom"><span>Đang mở</span><strong>{{ summary.opened }} đề tài</strong></div>
+    <p class="summary-note">Thông tin đề tài và giảng viên được cập nhật từ hệ thống quản lý.</p>
+  </aside>
+</section>
+<section id="topic-catalog" class="catalog" aria-labelledby="catalog-title">
+  <div class="catalog-heading"><div><h2 id="catalog-title">Danh mục đề tài công khai</h2></div><span class="result-count">{{ page_obj.paginator.count }} kết quả</span></div>
+  <form class="filter-panel row g-3 align-items-end" method="get" action="{% url 'core:home' %}#topic-catalog" role="search">
+    <div class="col-12 col-lg-7"><label for="topic-query" class="form-label">Tìm theo tên, mã đề tài hoặc giảng viên</label><input id="topic-query" class="form-control" type="search" name="q" maxlength="150" value="{{ query }}" placeholder="Ví dụ: an toàn mạng, IoT, KHCN-001"></div>
+    <div class="col-12 col-sm-7 col-lg-3"><label for="topic-status" class="form-label">Trạng thái</label><select id="topic-status" class="form-select" name="status"><option value="">Tất cả trạng thái</option>{% for value, label in statuses %}<option value="{{ value }}"{% if selected_status == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+    <div class="col-12 col-sm-5 col-lg-2"><button class="btn btn-primary w-100" type="submit">Tìm đề tài</button></div>
+  </form>
+  {% if query or selected_status %}<div class="filter-result"><span>Danh sách đã lọc{% if query %} theo “{{ query }}”{% endif %}.</span><a href="{% url 'core:home' %}#topic-catalog">Xóa bộ lọc</a></div>{% endif %}
+  <div class="row g-4 topic-grid">
+  {% for topic in page_obj %}
+    <div class="col-12 col-md-6 col-xl-4">
+      <article class="topic-card h-100">
+        <div class="topic-meta"><span class="topic-code">{{ topic.code }}</span><span class="status-badge status-{{ topic.status|lower }}">{{ topic.get_status_display }}</span></div>
+        <h3><a href="{% url 'topics:detail' topic.pk %}">{{ topic.title }}</a></h3>
+        <p class="topic-description">{{ topic.description }}</p>
+        <div class="lecturer"><span class="lecturer-avatar" aria-hidden="true">{{ topic.lecturer.full_name|first }}</span><div><span class="lecturer-label">Giảng viên phụ trách</span><span class="lecturer-name">{{ topic.lecturer.full_name }}</span></div></div>
+      </article>
+    </div>
+  {% empty %}
+    <div class="col-12"><div class="empty-state"><h3>Chưa tìm thấy đề tài</h3><p>Thử từ khóa khác hoặc chọn tất cả trạng thái để xem thêm đề tài.</p></div></div>
+  {% endfor %}
+  </div>
+  {% if page_obj.has_other_pages %}
+  <nav class="pagination-nav" aria-label="Phân trang đề tài">
+    {% if page_obj.has_previous %}<a class="btn btn-outline-secondary" href="?q={{ query|urlencode }}&amp;status={{ selected_status|urlencode }}&amp;page={{ page_obj.previous_page_number }}#topic-catalog">Trang trước</a>{% endif %}
+    <span aria-current="page">Trang {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}<a class="btn btn-outline-secondary" href="?q={{ query|urlencode }}&amp;status={{ selected_status|urlencode }}&amp;page={{ page_obj.next_page_number }}#topic-catalog">Trang sau</a>{% endif %}
+  </nav>
+  {% endif %}
+</section>
+{% endblock %}
