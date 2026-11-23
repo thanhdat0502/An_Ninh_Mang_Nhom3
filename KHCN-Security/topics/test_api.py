@@ -182,11 +182,77 @@ class TopicAPITests(TestCase):
         self.assertEqual(self.opened.title, "Nghiên cứu mạng OWN-OPEN")
         self.assertEqual(Topic.objects.count(), 6)
 
-    def test_lecturer_cannot_administer_even_owned_topics(self):
+    def test_lecturer_can_create_self_assigned_topic(self):
+        self.login(self.lecturer)
+        capabilities = self.client.get("/api/topics/capabilities/").data
+        self.assertTrue(capabilities["can_create"])
+        self.assertFalse(capabilities["can_edit"])
+        self.assertFalse(capabilities["can_delete"])
+        data = self.payload()
+        del data["lecturer"]
+        del data["status"]
+        response = self.write("post", "/api/topics/", data)
+        self.assertEqual(response.status_code, 201)
+        created = Topic.objects.get(pk=response.data["id"])
+        self.assertEqual(created.lecturer_id, self.lecturer.pk)
+        self.assertEqual(created.status, Topic.Status.DRAFT)
+        self.assertEqual(self.client.get(self.url(created)).status_code, 200)
+        self.login(self.other)
+        self.assertEqual(self.client.get(self.url(created)).status_code, 404)
+        self.login(self.student)
+        self.assertEqual(self.client.get(self.url(created)).status_code, 404)
+
+    def test_lecturer_can_create_open_topic_with_own_id(self):
+        self.login(self.lecturer)
+        response = self.write("post", "/api/topics/", self.payload())
+        self.assertEqual(response.status_code, 201)
+        self.login(self.student)
+        self.assertEqual(
+            self.client.get(f"/api/topics/{response.data['id']}/").status_code, 200
+        )
+
+    def test_lecturer_cannot_assign_new_topic_to_another_lecturer(self):
+        self.login(self.lecturer)
+        response = self.write(
+            "post", "/api/topics/", self.payload(lecturer=self.other.pk)
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("lecturer", response.data)
+        self.assertFalse(Topic.objects.filter(code="NEW-001").exists())
+
+    def test_lecturer_create_requires_permission_and_csrf(self):
+        self.login(self.lecturer)
+        response = self.client.post("/api/topics/", self.payload(), format="json")
+        self.assertEqual(response.status_code, 403)
+        Group.objects.get(name=Role.LECTURER).permissions.remove(
+            Permission.objects.get(
+                content_type__app_label="topics", codename="add_topic"
+            )
+        )
+        self.assertFalse(
+            self.client.get("/api/topics/capabilities/").data["can_create"]
+        )
+        self.assertEqual(
+            self.write("post", "/api/topics/", self.payload()).status_code, 403
+        )
+
+    def test_lecturer_create_validates_code_and_content(self):
+        self.login(self.lecturer)
+        for changes in (
+            {"code": self.opened.code},
+            {"title": ""},
+            {"status": "INVALID"},
+        ):
+            with self.subTest(changes=changes):
+                response = self.write("post", "/api/topics/", self.payload(**changes))
+                self.assertEqual(response.status_code, 400)
+        self.assertEqual(Topic.objects.count(), 6)
+
+    def test_lecturer_cannot_update_or_delete_even_owned_topics(self):
         self.login(self.lecturer)
         for method, url, data in (
-            ("post", "/api/topics/", self.payload()),
             ("patch", self.url(), {"title": "Trái phép"}),
+            ("put", self.url(), self.payload()),
             ("delete", self.url(), None),
             ("patch", self.url(self.foreign), {"title": "Trái phép"}),
         ):
@@ -541,6 +607,7 @@ class TopicAPITests(TestCase):
         call_command("sync_topic_permissions", stdout=StringIO())
         self.assertEqual(User.objects.count(), before)
         self.assertEqual(Group.objects.get(name=Role.STUDENT).permissions.count(), 1)
+        self.assertEqual(Group.objects.get(name=Role.LECTURER).permissions.count(), 2)
         self.assertEqual(Group.objects.get(name=Role.ADMIN).permissions.count(), 4)
 
     def test_workspace_and_detail_html_do_not_embed_protected_records(self):

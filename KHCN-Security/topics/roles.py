@@ -14,7 +14,9 @@ def sync_topic_permissions():
             content_type__app_label="topics",
             content_type__model="topic",
         )
-        if role != Role.ADMIN:
+        if role == Role.LECTURER:
+            permissions = permissions.filter(codename__in=("view_topic", "add_topic"))
+        elif role != Role.ADMIN:
             permissions = permissions.filter(codename="view_topic")
         group.permissions.add(*permissions)
 
@@ -29,6 +31,6 @@ def business_role(user):
 
 
 def can_manage_topic(user, permission):
-    return business_role(user) == Role.ADMIN and user.has_perm(
-        f"topics.{permission}_topic"
-    )
+    role = business_role(user)
+    allowed = role == Role.ADMIN or (role == Role.LECTURER and permission == "add")
+    return allowed and user.has_perm(f"topics.{permission}_topic")

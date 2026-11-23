@@ -7,6 +7,7 @@ from rest_framework.validators import UniqueValidator
 from accounts.models import Role
 
 from .models import Topic
+from .roles import business_role
 from .services import persist_topic
 
 
@@ -46,6 +47,26 @@ class TopicSerializer(serializers.ModelSerializer):
             "updated_at",
         )
         read_only_fields = ("id", "created_at", "updated_at")
+
+    def get_fields(self):
+        fields = super().get_fields()
+        request = self.context.get("request")
+        if request and business_role(request.user) == Role.LECTURER:
+            fields["lecturer"].required = False
+            fields["lecturer"].default = serializers.CurrentUserDefault()
+        return fields
+
+    def validate_lecturer(self, lecturer):
+        request = self.context.get("request")
+        if (
+            request
+            and business_role(request.user) == Role.LECTURER
+            and lecturer.pk != request.user.pk
+        ):
+            raise serializers.ValidationError(
+                "Bạn chỉ có thể thêm đề tài do chính mình phụ trách."
+            )
+        return lecturer
 
     def to_internal_value(self, data):
         if isinstance(data, Mapping):

@@ -469,7 +469,7 @@ Phi chức năng gồm không hardcode secret, không trả dữ liệu ngoài s
 | --- | --- |
 | Khách | Xem/tìm danh mục công khai không có DRAFT; không dùng API nghiệp vụ riêng |
 | ADMIN | Quản lý tài khoản, phân công Lecturer, CRUD đề tài, xem và xét duyệt mọi đăng ký |
-| LECTURER | Xem đề tài do mình phụ trách, xem và xét duyệt các đăng ký thuộc các đề tài đó |
+| LECTURER | Thêm đề tài do mình phụ trách, xem đề tài và xét duyệt các đăng ký thuộc các đề tài đó |
 | STUDENT | Xem đề tài đã công bố, đăng ký đề tài OPEN và theo dõi đơn của mình |
 
 Superuser là khái niệm quản trị hệ thống Django, không phải tác nhân nghiệp vụ thứ tư. Chỉ tạo thêm superuser khi thực sự cần quản trị hệ thống, không dùng thay bộ ba tài khoản demo.
@@ -506,6 +506,7 @@ Mỗi mũi tên chỉ khả năng dùng chức năng; điều kiện quyền và
 | Quản lý tài khoản | ADMIN + permission | Tìm/lọc → sửa email/họ tên/trạng thái → xác nhận khi cần | Không tự khóa, không sửa đặc quyền qua API; email trùng bị từ chối |
 | Cấp tài khoản/gán nhóm | Đủ quyền native Admin | Thêm user → gán STUDENT/LECTURER → bàn giao đăng nhập | Không có public signup; không cấp staff/superuser cho SV/GV |
 | Quản lý đề tài | ADMIN + permission | Chọn Lecturer hợp lệ → tạo/sửa → lưu | Mã không trùng; xóa đề tài có đăng ký trả 409 |
+| Giảng viên thêm đề tài | LECTURER + add_topic | Đề tài nghiên cứu → Thêm đề tài → Lưu đề tài | Tự gán người tạo phụ trách; không được gán cho người khác |
 | Đăng ký đề tài | STUDENT + permission, đề tài OPEN | Gửi topic ID → server lấy student từ JWT → tạo PENDING | Ngoài scope 404; trùng/không OPEN trả 409 |
 | Xét duyệt | ADMIN hoặc Lecturer đúng phạm vi + permission | Mở đơn → chấp nhận/từ chối → ghi audit | Chỉ một quyết định thắng; xử lý lại trả 409 |
 | Đăng xuất | CSRF hợp lệ | Blacklist refresh nếu hợp lệ → xóa cookies | 204; access cũ có thể còn hiệu lực tới exp |
@@ -670,7 +671,8 @@ Bảng giả định user đang hoạt động và có model permissions nền. 
 | Thao tác qua API nghiệp vụ | ADMIN | LECTURER | STUDENT |
 | --- | --- | --- | --- |
 | Xem/tìm/lọc đề tài | Tất cả, gồm DRAFT | Chỉ đề tài mình phụ trách | Các đề tài không DRAFT |
-| Tạo/sửa/xóa đề tài | Có, cần permission tương ứng | Không, kể cả đề tài mình phụ trách | Không |
+| Tạo đề tài | Có, cần add_topic | Có, cần add_topic; tự gán mình phụ trách | Không |
+| Sửa/xóa đề tài | Có, cần permission tương ứng | Không | Không |
 | Xem danh sách Lecturer để phân công | Có quyền add/change topic | Không | Không |
 | Đăng ký đề tài | Không đăng ký thay Student | Không | Có, OPEN và chưa đăng ký |
 | Xem đơn đăng ký | Tất cả | Thuộc đề tài mình phụ trách | Của chính mình |
@@ -725,7 +727,7 @@ Vai trò trong JSON `me` phục vụ hiển thị UI; mọi request vẫn lấy 
 | --- | --- | --- |
 | GET | `/api/topics/` | List/search/filter/pagination theo scope và view_topic |
 | GET | `/api/topics/<id>/` | Chi tiết trong scope |
-| POST | `/api/topics/` | ADMIN + add_topic + CSRF |
+| POST | `/api/topics/` | ADMIN hoặc LECTURER + add_topic + CSRF; Lecturer chỉ tạo cho mình |
 | PUT/PATCH | `/api/topics/<id>/` | ADMIN + change_topic + CSRF |
 | DELETE | `/api/topics/<id>/` | ADMIN + delete_topic + CSRF; 409 nếu có liên quan |
 | GET | `/api/topics/capabilities/` | Quyền và trạng thái phục vụ UI |
@@ -998,7 +1000,7 @@ Không xóa dữ liệu đăng ký thật để “làm sạch” cuối demo. C
 
 **Tại sao cần check Groups/permissions nếu JWT đã hợp lệ?** JWT hợp lệ chỉ xác định người dùng/token. Quyền và scope vẫn được đọc từ tài khoản phía server; client không thể tự thêm role trong body/header để được chấp nhận.
 
-**Ẩn nút Admin có chứng minh phân quyền không?** Không. UI chỉ hướng dẫn người dùng. Request thủ công vẫn phải bị backend từ chối; các test Student/Lecturer ghi đề tài là ví dụ.
+**Ẩn nút Admin có chứng minh phân quyền không?** Không. UI chỉ hướng dẫn người dùng. Request thủ công vẫn phải bị backend kiểm tra; Student không được ghi đề tài, Lecturer chỉ được tạo đề tài cho mình và không được sửa/xóa.
 
 **Lecturer thấy danh mục công khai của người khác có phải IDOR?** Không theo policy công khai hiện tại. API làm việc của Lecturer bị scope theo người phụ trách; dữ liệu đăng ký/Student và DRAFT không được công khai theo danh mục.
 

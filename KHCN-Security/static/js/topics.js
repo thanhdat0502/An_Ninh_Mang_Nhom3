@@ -119,12 +119,15 @@
     form.reset();
     clearErrors(form);
     try {
-      // Selector records are fetched through the Admin-only API, never from a
-      // hidden DOM list or a client-supplied role.
       const selector = form.elements.lecturer;
+      const selfAssigned = capabilities.role === "LECTURER";
+      selector.disabled = selfAssigned;
+      selector.required = !selfAssigned;
+      form.querySelector("[data-lecturer-field]").hidden = selfAssigned;
+      form.querySelector("[data-lecturer-self]").hidden = !selfAssigned;
       selector.replaceChildren(new Option("Chọn giảng viên", ""));
       let page = 1;
-      let next = true;
+      let next = !selfAssigned;
       while (next) {
         const result = await fetchData(`/api/topics/lecturers/?page_size=100&page=${page}`);
         for (const lecturer of result.results) selector.add(new Option(lecturer.full_name, String(lecturer.id)));
@@ -160,7 +163,7 @@
     ui.busy(button, true, "Đang lưu…");
     try {
       const data = Object.fromEntries(new FormData(form));
-      data.lecturer = Number(data.lecturer);
+      if (!form.elements.lecturer.disabled) data.lecturer = Number(data.lecturer);
       await fetchData(editingId === null ? "/api/topics/" : `/api/topics/${editingId}/`, {
         method: editingId === null ? "POST" : "PATCH", data,
       });
@@ -213,7 +216,7 @@
         return;
       }
       const scope = capabilities.role === "ADMIN" ? "Quản lý danh mục và phân công giảng viên phụ trách đề tài."
-        : capabilities.role === "LECTURER" ? "Chỉ hiển thị đề tài do bạn phụ trách."
+        : capabilities.role === "LECTURER" ? "Thêm đề tài mới và xem các đề tài do bạn phụ trách."
           : "Đề tài đã công bố; bạn không có quyền quản trị.";
       document.querySelector("[data-scope]").textContent = scope;
       document.querySelector("[data-create-topic]").hidden = !capabilities.can_create;

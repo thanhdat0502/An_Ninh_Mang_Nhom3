@@ -32,7 +32,9 @@ class TopicAccess(BasePermission):
         if not business_role(user):
             return False
         if view.action == "lecturers":
-            return can_manage_topic(user, "add") or can_manage_topic(user, "change")
+            return business_role(user) == Role.ADMIN and (
+                can_manage_topic(user, "add") or can_manage_topic(user, "change")
+            )
         if request.method in SAFE_METHODS:
             return user.has_perm("topics.view_topic")
         permission = self.write_permissions.get(request.method)
